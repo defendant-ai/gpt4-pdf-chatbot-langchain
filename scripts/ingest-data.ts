@@ -9,6 +9,7 @@ import { DirectoryLoader } from 'langchain/document_loaders/fs/directory';
 /* Name of directory to retrieve your files from 
    Make sure to add your PDF files inside the 'docs' folder
 */
+// TODO: Download document from Supabase to local filesystem in docs folder
 const filePath = 'docs';
 
 export const run = async () => {
