@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
             // Download all files and save them locally
-            await Promise.all(files.map(async file => {
+            await Promise.all(files.map(async (file, index) => {
                 // Download the file
                 const { data: fileBlob, error: downloadError } = await supabase
                     .storage
@@ -41,16 +41,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     .download(file.name);
 
                 if (downloadError) throw downloadError;
+                console.log(downloadError)
 
                 // Convert Blob to Buffer and save the file to the 'docs' directory
                 const buffer = Buffer.from(await fileBlob.arrayBuffer());
                 await fs.promises.writeFile(path.join('docs', file.name), buffer);
+                console.log(`Finished download for file ${index + 1}: ${file.name}`);
             }));
 
-            console.log('Before')
-            // Run the ingestion
+            console.log('Starting ingestion process...');
             await run();
-            console.log('After')
+            console.log('Finished ingestion process...');
 
             // Delete the files from 'docs' directory
             for (const file of files) {
