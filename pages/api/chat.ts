@@ -9,9 +9,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { question, history } = req.body;
+  const { question, history, user } = req.body;
 
-  console.log('question', question);
+  console.log(req.body);
 
   //only accept post requests
   if (req.method !== 'POST') {
@@ -39,14 +39,15 @@ export default async function handler(
     );
 
     //create chain
-    const chain = makeChain(vectorStore);
+    const chain = makeChain(vectorStore, user);
     //Ask a question using chat history
     const response = await chain.call({
       question: sanitizedQuestion,
       chat_history: history || [],
     });
 
-    console.log('response', response);
+    console.log('CHAIN', chain);
+    console.log('RESPONSE', response);
     res.status(200).json(response);
   } catch (error: any) {
     console.log('error', error);

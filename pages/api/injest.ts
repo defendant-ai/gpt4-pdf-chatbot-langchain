@@ -33,12 +33,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
             // Download all files and save them locally
-            await Promise.all(files.map(async (file, index) => {
+            const successfullyDownloadedFileNames = await Promise.all( files.map(async (file, index) => {
                 // Download the file
                 const { data: fileBlob, error: downloadError } = await supabase
                     .storage
-                    .from('user_documents')
-                    .download(file.name);
+                    .from("user_documents")
+                    .download(`${userId}/${file.name}`);
 
                 if (downloadError) throw downloadError;
                 console.log(downloadError)
@@ -47,6 +47,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const buffer = Buffer.from(await fileBlob.arrayBuffer());
                 await fs.promises.writeFile(path.join('docs', file.name), buffer);
                 console.log(`Finished download for file ${index + 1}: ${file.name}`);
+                // creating a new promise to return the file object
+                return file.name;
             }));
 
             console.log('Starting ingestion process...');
@@ -54,8 +56,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.log('Finished ingestion process...');
 
             // Delete the files from 'docs' directory
-            for (const file of files) {
-                fs.unlinkSync(path.join('docs', file.name));
+            for (const fileName of successfullyDownloadedFileNames) {
+                fs.unlinkSync(path.join('docs', fileName));
             }
 
             res.status(200).json({ message: 'Ingestion complete' });
