@@ -11,7 +11,7 @@ import { DirectoryLoader } from 'langchain/document_loaders/fs/directory';
 */
 const filePath = 'docs';
 
-export const run = async () => {
+export const run = async (userId: string) => {
   try {
     /*load raw docs from the all files in the directory */
     const directoryLoader = new DirectoryLoader(filePath, {
@@ -38,7 +38,7 @@ export const run = async () => {
     //embed the PDF documents
     await PineconeStore.fromDocuments(docs, embeddings, {
       pineconeIndex: index,
-      namespace: PINECONE_NAME_SPACE,
+      namespace: userId,
       textKey: 'text',
     });
   } catch (error) {
@@ -46,8 +46,3 @@ export const run = async () => {
     throw new Error('Failed to ingest your data');
   }
 };
-
-(async () => {
-  await run();
-  console.log('ingestion complete');
-})();
