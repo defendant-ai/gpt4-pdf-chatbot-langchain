@@ -10,9 +10,6 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const { question, history, user } = req.body;
-  console.log(user)
-  console.log(req.body);
-
   //only accept post requests
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -34,7 +31,7 @@ export default async function handler(
       {
         pineconeIndex: index,
         textKey: 'text',
-        namespace: PINECONE_NAME_SPACE, //namespace comes from your config folder
+        namespace: user.user_id,
       },
     );
 
