@@ -10,7 +10,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const { question, history, user } = req.body;
-
+  console.log(user)
   console.log(req.body);
 
   //only accept post requests
