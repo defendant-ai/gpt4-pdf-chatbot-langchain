@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }));
 
             console.log('Starting ingestion process...');
-            await run();
+            await run(userId);
             console.log('Finished ingestion process...');
 
             // Delete the files from 'docs' directory
